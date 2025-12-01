@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Subway Sardine</title>
+    <title>Packed Like Sardines</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap');
@@ -42,6 +42,7 @@
               'blink': 'blink 1s step-end infinite',
               'float': 'float 3s ease-in-out infinite',
               'fall': 'fall 1.5s linear forwards',
+              'fade-in': 'fadeIn 0.5s ease-out forwards',
             },
             keyframes: {
               blink: {
@@ -55,6 +56,10 @@
               fall: {
                 '0%': { transform: 'translateY(0)', opacity: '1' },
                 '100%': { transform: 'translateY(150px)', opacity: '0' },
+              },
+              fadeIn: {
+                '0%': { opacity: '0', transform: 'translateY(10px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
               }
             }
           }
@@ -74,5 +79,6 @@
 </head>
   <body>
     <div id="root"></div>
+    <script type="module" src="./index.tsx"></script>
   </body>
 </html>
