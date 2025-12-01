@@ -11,6 +11,7 @@ interface ViewingCanStageProps {
 
 const ViewingCanStage: React.FC<ViewingCanStageProps> = ({ canData, onBack, onGoHome }) => {
   const [adviceText, setAdviceText] = useState('');
+  const [recommendation, setRecommendation] = useState<string | null>(null);
   const [hasResponded, setHasResponded] = useState(false);
   const [sliderValue, setSliderValue] = useState(0);
   const [isUnlocked, setIsUnlocked] = useState(false);
@@ -30,12 +31,18 @@ const ViewingCanStage: React.FC<ViewingCanStageProps> = ({ canData, onBack, onGo
   };
 
   const handleRelease = () => {
+    // Construct final advice with recommendation tag if present
+    let finalAdvice = adviceText.trim();
+    if (recommendation) {
+        finalAdvice = `[${recommendation}] ${finalAdvice}`;
+    }
+    
     // Save to history
     const releasedFish: ReleasedSardine = {
         id: crypto.randomUUID(),
         originalCanId: canData.id,
         textLength: canData.text.length,
-        adviceGiven: adviceText || (sliderValue >= 99 ? "Silent support (Released)" : "No advice"),
+        adviceGiven: finalAdvice || (sliderValue >= 99 ? "Silent support (Released)" : "No advice"),
         industry: canData.industry,
         timestamp: new Date().toISOString()
     };
@@ -80,14 +87,14 @@ const ViewingCanStage: React.FC<ViewingCanStageProps> = ({ canData, onBack, onGo
       
       {/* Top Bar */}
       <div className="flex justify-between items-center border-b-2 border-black pb-2 mb-6 font-mono">
-        <span className="text-xs font-bold uppercase bg-black text-white px-2 py-1">
-            IND: {canData.industry}
+        <span className="text-xs font-bold bg-black text-white px-2 py-1">
+            Ind: {canData.industry}
         </span>
-        <span className="text-xs font-bold uppercase text-gray-500">
+        <span className="text-xs font-bold text-gray-500">
             {new Date(canData.timestamp).toLocaleDateString()}
         </span>
-        <span className="text-xs font-bold uppercase border-2 border-black px-2 py-1">
-            REQ: {canData.adviceNeeded}
+        <span className="text-xs font-bold border-2 border-black px-2 py-1">
+            Req: {canData.adviceNeeded}
         </span>
       </div>
 
@@ -115,12 +122,36 @@ const ViewingCanStage: React.FC<ViewingCanStageProps> = ({ canData, onBack, onGo
       {!isUnlocked && (
           <div className="space-y-6">
             
+            {/* Quick Actions */}
+            <div className="flex gap-4">
+                <button
+                    onClick={() => setRecommendation(recommendation === 'Quit!' ? null : 'Quit!')}
+                    className={`flex-1 py-4 text-xs font-bold uppercase tracking-widest border-2 border-black transition-all ${
+                        recommendation === 'Quit!' 
+                            ? 'bg-black text-white shadow-[2px_2px_0px_0px_rgba(100,100,100,0.5)]' 
+                            : 'bg-white hover:bg-gray-100'
+                    }`}
+                >
+                    Quit!
+                </button>
+                <button
+                    onClick={() => setRecommendation(recommendation === 'Endure' ? null : 'Endure')}
+                    className={`flex-1 py-4 text-xs font-bold uppercase tracking-widest border-2 border-black transition-all ${
+                        recommendation === 'Endure' 
+                            ? 'bg-black text-white shadow-[2px_2px_0px_0px_rgba(100,100,100,0.5)]' 
+                            : 'bg-white hover:bg-gray-100'
+                    }`}
+                >
+                    Endure
+                </button>
+            </div>
+
             {/* Advice Input */}
             <div className="relative">
                 <textarea
                     value={adviceText}
                     onChange={(e) => setAdviceText(e.target.value)}
-                    placeholder="Write a note before opening..."
+                    placeholder="Add a note... (optional)"
                     className="w-full h-24 border-2 border-black p-3 text-sm font-bold resize-none focus:outline-none focus:bg-gray-50 placeholder-gray-400 font-mono"
                 />
             </div>

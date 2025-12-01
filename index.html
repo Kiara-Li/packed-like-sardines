@@ -6,20 +6,18 @@
     <title>Packed Like Sardines</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-      /* Force font override globally */
+      /* Force JetBrains Mono everywhere */
       * {
-        font-family: 'IBM Plex Mono', monospace !important;
+        font-family: 'JetBrains Mono', monospace !important;
       }
-      
       body {
         background-color: #ffffff;
         color: #000000;
         overflow-x: hidden;
       }
-
       /* Custom Scrollbar */
       ::-webkit-scrollbar {
         width: 8px;
@@ -41,8 +39,8 @@
         theme: {
           extend: {
             fontFamily: {
-              sans: ['IBM Plex Mono', 'monospace'],
-              mono: ['IBM Plex Mono', 'monospace'],
+              sans: ['JetBrains Mono', 'monospace'],
+              mono: ['JetBrains Mono', 'monospace'],
             },
             colors: {
               'paper-white': '#ffffff',

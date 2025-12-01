@@ -170,13 +170,6 @@ const App: React.FC = () => {
         )}
 
       </main>
-
-      {/* Decorative Footer - Only show on non-home screens or if needed */}
-      {stage !== AppStage.HOME && (
-        <footer className="py-4 text-center text-xs font-bold border-t-2 border-black bg-white mt-auto z-10">
-            SUBWAY SARDINE PROJECT &copy; {new Date().getFullYear()} // v2.3
-        </footer>
-      )}
     </div>
   );
 };
