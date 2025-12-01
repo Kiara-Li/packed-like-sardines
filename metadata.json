@@ -1,0 +1,7 @@
+{
+  "name": "Subway Sardine",
+  "description": "An interactive ASCII art experience for urban commuters to express stress, package it into a sardine can, and seek advice.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
