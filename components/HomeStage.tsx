@@ -13,10 +13,12 @@ interface FishEntity {
   id: string;
   x: number;
   y: number;
+  baseY: number;
   speed: number;
   data: ReleasedSardine;
   ascii: string;
   direction: 'left' | 'right';
+  offset: number; // Phase offset for sine wave
 }
 
 const HomeStage: React.FC<HomeStageProps> = ({ onStart, onBrowse }) => {
@@ -29,14 +31,17 @@ const HomeStage: React.FC<HomeStageProps> = ({ onStart, onBrowse }) => {
     const released = getReleasedSardines();
     
     // Spawn fish at random positions
+    // base ASCII is <º))))>< (Head on Left)
     const entities: FishEntity[] = released.map(r => ({
       id: r.id,
-      x: Math.random() * 80 + 5, // %
-      y: Math.random() * 70 + 10, // %
-      speed: (Math.random() * 0.05) + 0.02,
+      x: Math.random() * 80 + 10, // %
+      y: Math.random() * 80 + 10, // %
+      baseY: Math.random() * 80 + 10,
+      speed: (Math.random() * 0.04) + 0.02,
       data: r,
-      ascii: generateFishAscii(r.textLength, false), // Mouth closed usually
-      direction: Math.random() > 0.5 ? 'right' : 'left'
+      ascii: generateFishAscii(r.textLength, false),
+      direction: Math.random() > 0.5 ? 'right' : 'left',
+      offset: Math.random() * 100
     }));
 
     setFishes(entities);
@@ -44,21 +49,32 @@ const HomeStage: React.FC<HomeStageProps> = ({ onStart, onBrowse }) => {
 
   // Animation Loop
   useEffect(() => {
+    let time = 0;
     const animate = () => {
+      time += 0.1;
       setFishes(prevFishes => prevFishes.map(fish => {
         let newX = fish.x + (fish.direction === 'right' ? fish.speed : -fish.speed);
         let newDir = fish.direction;
 
-        // Turn around at edges
-        if (newX > 95) {
+        // Turn around at edges with some margin
+        if (newX > 92) {
             newDir = 'left';
-            newX = 95;
-        } else if (newX < 0) {
+            newX = 92;
+        } else if (newX < 8) {
             newDir = 'right';
-            newX = 0;
+            newX = 8;
         }
 
-        return { ...fish, x: newX, direction: newDir };
+        // Natural movement: Sine wave bob + tiny random jitter
+        const bob = Math.sin(time * 0.5 + fish.offset) * 0.3;
+        const jitter = (Math.random() - 0.5) * 0.1;
+        
+        return { 
+            ...fish, 
+            x: newX, 
+            y: fish.baseY + bob + jitter,
+            direction: newDir 
+        };
       }));
       animationRef.current = requestAnimationFrame(animate);
     };
@@ -80,7 +96,9 @@ const HomeStage: React.FC<HomeStageProps> = ({ onStart, onBrowse }) => {
                 style={{
                     left: `${fish.x}%`,
                     top: `${fish.y}%`,
-                    transform: `scaleX(${fish.direction === 'left' ? -1 : 1})`,
+                    // ASCII <º))))>< is head-left. 
+                    // If moving Left, scaleX(1). If moving Right, flip it to scaleX(-1).
+                    transform: `translate(-50%, -50%) scaleX(${fish.direction === 'left' ? 1 : -1})`,
                     fontSize: '1.2rem',
                     fontWeight: 'bold'
                 }}
@@ -114,11 +132,11 @@ const HomeStage: React.FC<HomeStageProps> = ({ onStart, onBrowse }) => {
            </div>
        )}
         
-        {/* Main Menu Overlay (Centered but transparent enough to see fish) */}
+        {/* Main Menu Overlay */}
        <div className="relative z-10 flex flex-col items-center justify-center min-h-screen pointer-events-none">
-            <div className="pointer-events-auto bg-white/90 p-8 border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-center max-w-md w-full mx-4">
-                <h1 className="text-3xl sm:text-4xl font-bold tracking-tighter uppercase mb-2">
-                    Subway Sardine
+            <div className="pointer-events-auto bg-white/95 p-6 border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-center max-w-sm w-full mx-6">
+                <h1 className="text-2xl sm:text-3xl font-bold tracking-tighter uppercase mb-4">
+                    packed like sardines
                 </h1>
                 <p className="text-xs font-bold text-gray-500 mb-8 uppercase tracking-widest">
                     Station: Main_Hub // Population: {fishes.length}
@@ -127,20 +145,20 @@ const HomeStage: React.FC<HomeStageProps> = ({ onStart, onBrowse }) => {
                 <div className="space-y-4">
                     <button 
                         onClick={onStart}
-                        className="w-full py-4 bg-black text-white font-bold uppercase tracking-widest hover:bg-gray-800 transition-all"
+                        className="w-full py-4 bg-black text-white font-bold uppercase tracking-widest hover:bg-gray-800 transition-all text-xs sm:text-sm"
                     >
                         I'm feeling compressed
                     </button>
                     <button 
                         onClick={onBrowse}
-                        className="w-full py-4 bg-white border-2 border-black text-black font-bold uppercase tracking-widest hover:bg-gray-100 transition-all"
+                        className="w-full py-4 bg-white border-2 border-black text-black font-bold uppercase tracking-widest hover:bg-gray-100 transition-all text-xs sm:text-sm"
                     >
                         Open a Random Can
                     </button>
                 </div>
             </div>
             {fishes.length === 0 && (
-                <div className="absolute bottom-10 text-xs font-bold text-gray-400 uppercase">
+                <div className="absolute bottom-10 text-xs font-bold text-gray-400 uppercase text-center px-4">
                     The waters are empty. Start by opening a can.
                 </div>
             )}
