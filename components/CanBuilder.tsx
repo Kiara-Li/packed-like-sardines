@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { UserCanData } from '../types';
 import { generateFishAscii, generateCanLines } from '../constants';
@@ -45,7 +44,7 @@ const CanBuilder: React.FC<CanBuilderProps> = ({ initialData, onComplete, onBack
 
   return (
     <div className="flex flex-col items-center w-full max-w-lg mx-auto p-4 animate-fade-in">
-      <h2 className="text-xl mb-8 font-bold text-center uppercase tracking-widest border-b-2 border-black pb-2">
+      <h2 className="text-xl mb-8 font-bold text-center uppercase tracking-widest border-b-2 border-black pb-2 font-mono">
         [ Canning Station ]
       </h2>
 
@@ -57,7 +56,7 @@ const CanBuilder: React.FC<CanBuilderProps> = ({ initialData, onComplete, onBack
         
         {/* Visual Sticker Overlay - Positioned roughly over the center/bottom */}
         {(industry || ingredients.length > 1) && (
-            <div className="absolute top-[60%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white text-black p-2 sm:p-3 text-xs font-bold rotate-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-2 border-black max-w-[200px] z-10">
+            <div className="absolute top-[60%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white text-black p-2 sm:p-3 text-xs font-bold rotate-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-2 border-black max-w-[200px] z-10 font-mono">
                 <div className="uppercase border-b-2 border-black mb-2 pb-1 flex justify-between">
                     <span>NET WT: HEAVY</span>
                     <span>{new Date().toLocaleDateString()}</span>
@@ -73,11 +72,11 @@ const CanBuilder: React.FC<CanBuilderProps> = ({ initialData, onComplete, onBack
       {/* The Form */}
       <div className="w-full space-y-6 border-2 border-black p-6 bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
         <div className="flex flex-col space-y-2">
-          <label className="text-xs font-bold uppercase">Select Line / Industry</label>
+          <label className="text-xs font-bold uppercase font-mono">Select Line / Industry</label>
           <select 
             value={industry} 
             onChange={(e) => setIndustry(e.target.value)}
-            className="bg-white border-b-2 border-black py-2 focus:outline-none text-sm font-bold"
+            className="bg-white border-b-2 border-black py-2 focus:outline-none text-sm font-bold font-mono"
           >
             <option value="" disabled>Choose...</option>
             <option value="Tech">Line 1: Tech / Dev</option>
@@ -91,13 +90,13 @@ const CanBuilder: React.FC<CanBuilderProps> = ({ initialData, onComplete, onBack
         </div>
 
         <div className="flex flex-col space-y-2">
-          <label className="text-xs font-bold uppercase">Required Output</label>
+          <label className="text-xs font-bold uppercase font-mono">Required Output</label>
           <div className="flex flex-wrap gap-2">
             {['Listen', 'Advice', 'Quit!', 'Hug'].map((opt) => (
               <button
                 key={opt}
                 onClick={() => setAdviceType(opt)}
-                className={`px-4 py-2 text-xs font-bold border-2 transition-all ${
+                className={`px-4 py-2 text-xs font-bold border-2 transition-all font-mono ${
                   adviceType === opt 
                     ? 'bg-black text-white border-black' 
                     : 'bg-white text-gray-400 border-gray-200 hover:border-black hover:text-black'
@@ -113,14 +112,14 @@ const CanBuilder: React.FC<CanBuilderProps> = ({ initialData, onComplete, onBack
       <div className="flex w-full gap-4 mt-8">
         <button 
             onClick={onBack}
-            className="flex-1 py-4 text-sm font-bold border-2 border-transparent text-gray-500 hover:text-red-600 hover:underline uppercase tracking-widest"
+            className="flex-1 py-4 text-sm font-bold border-2 border-transparent text-gray-500 hover:text-red-600 hover:underline uppercase tracking-widest font-mono"
         >
             Recycle
         </button>
         <button 
             onClick={handleSeal}
             disabled={!industry || isSealing}
-            className={`flex-1 py-4 text-sm font-bold border-2 uppercase tracking-widest transition-all ${
+            className={`flex-1 py-4 text-sm font-bold border-2 uppercase tracking-widest transition-all font-mono ${
                 industry 
                 ? 'bg-black text-white border-black hover:bg-gray-800 shadow-[4px_4px_0px_0px_rgba(100,100,100,0.5)]' 
                 : 'bg-gray-100 text-gray-400 border-gray-100 cursor-not-allowed'

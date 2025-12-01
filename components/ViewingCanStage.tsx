@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { UserCanData, ReleasedSardine } from '../types';
 import { generateFishAscii, generateCanLines } from '../constants';
@@ -54,20 +53,20 @@ const ViewingCanStage: React.FC<ViewingCanStageProps> = ({ canData, onBack, onGo
         <div className="flex flex-col h-full items-center justify-center p-6 animate-fade-in text-center">
              <div className="mb-8 relative h-20 w-full max-w-xs flex items-center justify-center">
                  {/* Animation of fish swimming away */}
-                <pre className="absolute text-2xl font-bold animate-float whitespace-pre">
+                <pre className="absolute text-2xl font-bold animate-float whitespace-pre font-mono">
                     {generateFishAscii(canData.text.length, true)}
                 </pre>
              </div>
 
-            <h2 className="text-2xl font-bold uppercase mb-4">Can Opened</h2>
-            <p className="text-sm font-bold mb-10 max-w-xs text-gray-600">
+            <h2 className="text-2xl font-bold uppercase mb-4 font-mono">Can Opened</h2>
+            <p className="text-sm font-bold mb-10 max-w-xs text-gray-600 font-mono">
                 You have released this sardine back into the ocean (Line 4).
             </p>
             
             <div className="space-y-4 w-full max-w-xs">
                 <button 
                     onClick={onGoHome}
-                    className="w-full px-8 py-4 bg-black text-white font-bold uppercase tracking-widest hover:bg-gray-800 shadow-[4px_4px_0px_0px_rgba(100,100,100,0.5)]"
+                    className="w-full px-8 py-4 bg-black text-white font-bold uppercase tracking-widest hover:bg-gray-800 shadow-[4px_4px_0px_0px_rgba(100,100,100,0.5)] font-mono"
                 >
                     Return to Main Station
                 </button>
@@ -80,7 +79,7 @@ const ViewingCanStage: React.FC<ViewingCanStageProps> = ({ canData, onBack, onGo
     <div className="flex flex-col h-full w-full max-w-2xl mx-auto pt-6 px-4 animate-fade-in pb-10">
       
       {/* Top Bar */}
-      <div className="flex justify-between items-center border-b-2 border-black pb-2 mb-6">
+      <div className="flex justify-between items-center border-b-2 border-black pb-2 mb-6 font-mono">
         <span className="text-xs font-bold uppercase bg-black text-white px-2 py-1">
             IND: {canData.industry}
         </span>
@@ -98,7 +97,7 @@ const ViewingCanStage: React.FC<ViewingCanStageProps> = ({ canData, onBack, onGo
           {canLines.join('\n')}
         </pre>
         {canData.ingredients && (
-             <div className="mt-4 text-center">
+             <div className="mt-4 text-center font-mono">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Contains traces of:</p>
                 <p className="text-xs font-bold italic">{canData.ingredients.join(' + ')}</p>
              </div>
@@ -122,7 +121,7 @@ const ViewingCanStage: React.FC<ViewingCanStageProps> = ({ canData, onBack, onGo
                     value={adviceText}
                     onChange={(e) => setAdviceText(e.target.value)}
                     placeholder="Write a note before opening..."
-                    className="w-full h-24 border-2 border-black p-3 text-sm font-bold resize-none focus:outline-none focus:bg-gray-50 placeholder-gray-400"
+                    className="w-full h-24 border-2 border-black p-3 text-sm font-bold resize-none focus:outline-none focus:bg-gray-50 placeholder-gray-400 font-mono"
                 />
             </div>
 
@@ -133,7 +132,7 @@ const ViewingCanStage: React.FC<ViewingCanStageProps> = ({ canData, onBack, onGo
                     style={{ width: `${sliderValue}%` }}
                 />
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <span className="text-xs font-bold uppercase tracking-[0.2em] text-gray-400">
+                    <span className="text-xs font-bold uppercase tracking-[0.2em] text-gray-400 font-mono">
                         {sliderValue < 50 ? '>>> SLIDE TO OPEN CAN >>>' : '>>> RELEASING... >>>'}
                     </span>
                 </div>
@@ -156,7 +155,7 @@ const ViewingCanStage: React.FC<ViewingCanStageProps> = ({ canData, onBack, onGo
 
             <button 
                 onClick={onBack}
-                className="w-full text-center text-xs font-bold uppercase text-gray-400 hover:text-black underline pt-4"
+                className="w-full text-center text-xs font-bold uppercase text-gray-400 hover:text-black underline pt-4 font-mono"
             >
                 Put it back (Cancel)
             </button>
