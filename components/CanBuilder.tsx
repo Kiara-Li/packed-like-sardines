@@ -1,6 +1,7 @@
+
 import React, { useState, useEffect } from 'react';
 import { UserCanData } from '../types';
-import { generateFishAscii } from '../constants';
+import { generateFishAscii, generateCanLines } from '../constants';
 import { analyzeCanContent } from '../services/geminiService';
 
 interface CanBuilderProps {
@@ -39,18 +40,8 @@ const CanBuilder: React.FC<CanBuilderProps> = ({ initialData, onComplete, onBack
   // Generate the specific fish based on the user's input text length
   const fishAscii = generateFishAscii(initialData.text.length, true);
   
-  // Calculate dynamic can dimensions
-  const padding = 6; // Space around fish
-  const innerWidth = fishAscii.length + padding;
-  
-  // Dynamic Can Parts
-  const lineTop         = '  ' + '_'.repeat(innerWidth);
-  const lineLid         = ' /' + ' '.repeat(innerWidth) + '\\';
-  const lineLabelTop    = '| ' + 'SARDINE BRAND CANNED'.padEnd(innerWidth - 1) + '|';
-  const lineFish        = '| ' + ' '.repeat(padding/2) + fishAscii + ' '.repeat(padding/2) + ' |';
-  const lineEmpty       = '| ' + ' '.repeat(innerWidth) + ' |';
-  const lineBottom      = '|' + '_'.repeat(innerWidth) + '|';
-  const lineBottomCurve = ' \\' + '_'.repeat(innerWidth) + '/';
+  // Generate the can lines dynamically
+  const canLines = generateCanLines(fishAscii);
 
   return (
     <div className="flex flex-col items-center w-full max-w-lg mx-auto p-4 animate-fade-in">
@@ -60,20 +51,13 @@ const CanBuilder: React.FC<CanBuilderProps> = ({ initialData, onComplete, onBack
 
       {/* The Visual Can */}
       <div className="mb-10 relative group flex justify-center">
-        <pre className="text-xs sm:text-sm md:text-base leading-none whitespace-pre text-black font-bold">
-          {lineTop}{'\n'}
-          {lineLid}{'\n'}
-          {lineLabelTop}{'\n'}
-          {lineEmpty}{'\n'}
-          {lineFish}{'\n'}
-          {lineEmpty}{'\n'}
-          {lineBottom}{'\n'}
-          {lineBottomCurve}
+        <pre className="text-xs sm:text-sm md:text-base leading-none whitespace-pre text-black font-bold font-mono">
+          {canLines.join('\n')}
         </pre>
         
-        {/* Visual Sticker Overlay */}
+        {/* Visual Sticker Overlay - Positioned roughly over the center/bottom */}
         {(industry || ingredients.length > 1) && (
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white text-black p-3 text-xs font-bold rotate-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-2 border-black max-w-[200px]">
+            <div className="absolute top-[60%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white text-black p-2 sm:p-3 text-xs font-bold rotate-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-2 border-black max-w-[200px] z-10">
                 <div className="uppercase border-b-2 border-black mb-2 pb-1 flex justify-between">
                     <span>NET WT: HEAVY</span>
                     <span>{new Date().toLocaleDateString()}</span>

@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { generateFishAscii } from '../constants';
 import { SardineState } from '../types';
@@ -28,16 +29,16 @@ const SardineMascot: React.FC<SardineMascotProps> = ({ sardineState, textLength 
 
   return (
     <div className="relative inline-block mt-4 select-none">
-      <pre className="text-base sm:text-xl leading-none whitespace-pre text-ink-black animate-float font-bold">
+      <pre className="text-xl sm:text-2xl leading-none whitespace-pre text-ink-black animate-float font-bold font-mono">
         {fishAscii}
       </pre>
       
-      {/* Tear Drops Logic */}
+      {/* Tear Drops Logic - Adjusted for horizontal fish <º... eye is roughly at char index 1 */}
       {sardineState.isCrying && (
         <>
-          <div className="absolute top-2 left-3 animate-fall text-lg">💧</div>
-          <div className="absolute top-4 left-4 animate-fall text-lg" style={{ animationDelay: '0.4s' }}>💧</div>
-          <div className="absolute top-3 left-2 animate-fall text-lg" style={{ animationDelay: '0.8s' }}>💧</div>
+          <div className="absolute top-5 left-[1.8ch] animate-fall text-lg leading-none">💧</div>
+          <div className="absolute top-6 left-[2.5ch] animate-fall text-lg leading-none" style={{ animationDelay: '0.4s' }}>💧</div>
+          <div className="absolute top-5 left-[1.2ch] animate-fall text-lg leading-none" style={{ animationDelay: '0.8s' }}>💧</div>
         </>
       )}
     </div>
