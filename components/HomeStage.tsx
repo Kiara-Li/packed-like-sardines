@@ -33,17 +33,25 @@ const HomeStage: React.FC<HomeStageProps> = ({ onStart, onBrowse, onHistory }) =
     
     // Spawn fish at random positions
     // base ASCII is <º))))>< (Head on Left)
-    const entities: FishEntity[] = released.map(r => ({
-      id: r.id,
-      x: Math.random() * 80 + 10, // %
-      y: Math.random() * 80 + 10, // %
-      baseY: Math.random() * 80 + 10,
-      speed: (Math.random() * 0.04) + 0.02,
-      data: r,
-      ascii: generateFishAscii(r.textLength, false),
-      direction: Math.random() > 0.5 ? 'right' : 'left',
-      offset: Math.random() * 100
-    }));
+    const entities: FishEntity[] = released.map(r => {
+      // Prioritize top (10-35%) and bottom (65-90%) to avoid center text box
+      const isTop = Math.random() > 0.5;
+      const safeY = isTop 
+        ? (Math.random() * 25 + 10) 
+        : (Math.random() * 25 + 65);
+
+      return {
+        id: r.id,
+        x: Math.random() * 80 + 10, // %
+        y: safeY, // Initial Y
+        baseY: safeY, // Anchor Y for animation
+        speed: (Math.random() * 0.04) + 0.02,
+        data: r,
+        ascii: generateFishAscii(r.textLength, false),
+        direction: Math.random() > 0.5 ? 'right' : 'left',
+        offset: Math.random() * 100
+      };
+    });
 
     setFishes(entities);
   }, []);
