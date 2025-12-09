@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import SardineMascot from './SardineMascot';
 import { SardineState } from '../types';
@@ -42,36 +43,45 @@ const InputStage: React.FC<InputStageProps> = ({ onNext }) => {
   };
 
   return (
-    <div className="flex flex-col h-full w-full max-w-2xl mx-auto relative pt-8 px-4">
+    <div className="flex flex-col h-full w-full max-w-xl mx-auto relative pt-6 px-4">
       
-      {/* Header */}
-      <div className="mb-8 text-center border-b-2 border-black pb-4">
-         <h1 className="text-3xl font-bold tracking-tighter text-ink-black uppercase">
-            Subway Sardine
-         </h1>
-         <p className="text-sm text-gray-600 font-bold mt-2 font-mono">
-            STATION: INPUT_W1 // TICKET: 1-WAY
-         </p>
+      {/* Header - Ticket Style */}
+      <div className="mb-6 border-b border-black pb-4 flex justify-between items-end">
+         <div>
+             <h1 className="text-2xl font-bold tracking-tight text-ink-black uppercase leading-none">
+                Subway Sardine
+             </h1>
+             <p className="text-[10px] text-gray-500 mt-1 font-mono uppercase tracking-widest">
+                Station: Input_W1
+             </p>
+         </div>
+         <div className="text-[10px] font-bold border border-black px-2 py-1 rounded-full">
+            TICKET: 1-WAY
+         </div>
       </div>
 
       {/* Input Area */}
-      <div className="flex-1 relative">
-        <label className="block text-xs font-bold mb-2 uppercase tracking-wider">
-           &gt; Describe your current compression level:
+      <div className="flex-1 relative flex flex-col">
+        <label className="block text-[10px] font-bold mb-2 uppercase tracking-wider text-gray-500">
+           Description of Compression
         </label>
+        
+        {/* Flat Input, No Shadow, Thinner Border */}
         <textarea
             value={text}
             onChange={handleInputChange}
-            placeholder="I feel compressed because..."
-            className="w-full h-48 bg-white border-2 border-black p-4 text-ink-black resize-none focus:outline-none focus:bg-gray-50 text-base leading-relaxed placeholder-gray-400 font-bold font-mono"
+            placeholder="Describe your current state..."
+            className="w-full h-64 bg-transparent border-y border-black p-4 text-ink-black resize-none focus:outline-none focus:bg-gray-50 text-base font-normal leading-relaxed placeholder-gray-400 font-mono"
             spellCheck={false}
         />
-        <div className="flex justify-between items-center mt-2">
-             <div className="text-xs font-bold text-gray-500 font-mono">
-                AUTO-SCALING FISH PROTOCOL ENGAGED
+        
+        {/* Meta Data Row */}
+        <div className="flex justify-between items-center py-2 border-b border-black">
+             <div className="text-[10px] text-gray-400 font-mono normal-case">
+                auto-scaling fish protocol engaged
             </div>
-            <div className="text-xs font-bold font-mono">
-                LEN: {text.length}
+            <div className="text-[10px] font-mono text-gray-400">
+                {text.length} chars
             </div>
         </div>
       </div>
@@ -84,13 +94,13 @@ const InputStage: React.FC<InputStageProps> = ({ onNext }) => {
             <SardineMascot sardineState={sardineState} textLength={text.length} />
         </div>
 
-        {/* Action Button */}
+        {/* Action Button - Flat Ticket Style */}
         {text.length > 2 && (
             <button
                 onClick={handleSubmit}
-                className="w-full max-w-sm border-2 border-black bg-white text-black py-4 text-sm font-bold hover:bg-black hover:text-white transition-all duration-200 uppercase tracking-widest shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-none font-mono"
+                className="w-full border border-black bg-white text-black py-4 text-sm font-bold hover:bg-black hover:text-white transition-colors duration-200 uppercase tracking-widest font-mono"
             >
-                Start Canning Process
+                Start Canning Process &rarr;
             </button>
         )}
       </div>

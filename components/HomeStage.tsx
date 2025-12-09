@@ -7,6 +7,7 @@ import { generateFishAscii } from '../constants';
 interface HomeStageProps {
   onStart: () => void;
   onBrowse: () => void;
+  onHistory: () => void;
 }
 
 interface FishEntity {
@@ -21,7 +22,7 @@ interface FishEntity {
   offset: number; // Phase offset for sine wave
 }
 
-const HomeStage: React.FC<HomeStageProps> = ({ onStart, onBrowse }) => {
+const HomeStage: React.FC<HomeStageProps> = ({ onStart, onBrowse, onHistory }) => {
   const [fishes, setFishes] = useState<FishEntity[]>([]);
   const [selectedFish, setSelectedFish] = useState<FishEntity | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -65,7 +66,6 @@ const HomeStage: React.FC<HomeStageProps> = ({ onStart, onBrowse }) => {
             newX = 8;
         }
 
-        // Natural movement: Sine wave bob + tiny random jitter
         const bob = Math.sin(time * 0.5 + fish.offset) * 0.3;
         const jitter = (Math.random() - 0.5) * 0.1;
         
@@ -86,18 +86,19 @@ const HomeStage: React.FC<HomeStageProps> = ({ onStart, onBrowse }) => {
   return (
     <div className="relative w-full h-full min-h-screen bg-paper-white overflow-hidden animate-fade-in font-mono">
        
+       {/* Background Grid Lines (Optional Texture) */}
+       <div className="absolute inset-0 pointer-events-none opacity-5" style={{ backgroundSize: '40px 40px', backgroundImage: 'linear-gradient(to right, black 1px, transparent 1px), linear-gradient(to bottom, black 1px, transparent 1px)' }}></div>
+
        {/* Aquarium Layer */}
        <div ref={containerRef} className="absolute inset-0 pointer-events-none z-0">
           {fishes.map(fish => (
              <div
                 key={fish.id}
                 onClick={() => setSelectedFish(fish)}
-                className="absolute cursor-pointer pointer-events-auto hover:text-blue-600 transition-colors select-none"
+                className="absolute cursor-pointer pointer-events-auto hover:text-gray-600 transition-colors select-none text-black"
                 style={{
                     left: `${fish.x}%`,
                     top: `${fish.y}%`,
-                    // ASCII <º))))>< is head-left. 
-                    // If moving Left, scaleX(1). If moving Right, flip it to scaleX(-1).
                     transform: `translate(-50%, -50%) scaleX(${fish.direction === 'left' ? 1 : -1})`,
                     fontSize: '1.2rem',
                     fontWeight: 'bold'
@@ -110,21 +111,21 @@ const HomeStage: React.FC<HomeStageProps> = ({ onStart, onBrowse }) => {
 
        {/* Floating Modal for Fish Details */}
        {selectedFish && (
-           <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/80 p-4" onClick={() => setSelectedFish(null)}>
-               <div className="bg-white border-2 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] max-w-sm w-full" onClick={(e) => e.stopPropagation()}>
-                    <h3 className="text-lg font-bold uppercase mb-2 border-b-2 border-black pb-1">
+           <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/90 p-4" onClick={() => setSelectedFish(null)}>
+               <div className="bg-white border border-black p-6 max-w-sm w-full" onClick={(e) => e.stopPropagation()}>
+                    <h3 className="text-sm font-bold uppercase mb-2 border-b border-black pb-1">
                         Rescued Sardine
                     </h3>
-                    <div className="text-xs font-bold text-gray-500 mb-4 uppercase">
-                        Origin: {selectedFish.data.industry} | released: {new Date(selectedFish.data.timestamp).toLocaleDateString()}
+                    <div className="text-[10px] text-gray-500 mb-4 uppercase">
+                        Line: {selectedFish.data.industry} // {new Date(selectedFish.data.timestamp).toLocaleDateString()}
                     </div>
-                    <div className="mb-4">
-                        <p className="text-xs uppercase font-bold text-gray-400">You said:</p>
-                        <p className="text-sm font-bold">"{selectedFish.data.adviceGiven}"</p>
+                    <div className="mb-6">
+                        <p className="text-[10px] uppercase font-bold text-gray-400 mb-1">Response:</p>
+                        <p className="text-sm font-normal">"{selectedFish.data.adviceGiven}"</p>
                     </div>
                     <button 
                         onClick={() => setSelectedFish(null)}
-                        className="w-full py-2 border-2 border-black text-xs font-bold uppercase hover:bg-black hover:text-white"
+                        className="w-full py-3 border border-black text-xs font-bold uppercase hover:bg-black hover:text-white"
                     >
                         Close
                     </button>
@@ -132,34 +133,41 @@ const HomeStage: React.FC<HomeStageProps> = ({ onStart, onBrowse }) => {
            </div>
        )}
         
-        {/* Main Menu Overlay */}
+        {/* Main Menu - Minimalist Flyer Style */}
        <div className="relative z-10 flex flex-col items-center justify-center min-h-screen pointer-events-none">
-            <div className="pointer-events-auto bg-white/95 p-6 border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-center max-w-sm w-full mx-6">
-                <h1 className="text-2xl sm:text-3xl font-bold tracking-tighter uppercase mb-4">
-                    packed like sardines
+            <div className="pointer-events-auto bg-white p-8 border border-black text-center max-w-xs w-full mx-6">
+                <h1 className="text-2xl font-bold tracking-tight uppercase mb-2 leading-none">
+                    packed like<br/>sardines
                 </h1>
-                <p className="text-xs font-bold text-gray-500 mb-8 uppercase tracking-widest">
-                    Station: Main_Hub // Population: {fishes.length}
+                <div className="w-8 h-px bg-black mx-auto mb-4"></div>
+                <p className="text-[10px] text-gray-500 mb-8 uppercase tracking-widest font-mono">
+                    Main_Hub // Pop: {fishes.length}
                 </p>
 
-                <div className="space-y-4">
+                <div className="space-y-3">
                     <button 
                         onClick={onStart}
-                        className="w-full py-4 bg-black text-white font-bold uppercase tracking-widest hover:bg-gray-800 transition-all text-xs sm:text-sm"
+                        className="w-full py-3 bg-black text-white font-bold uppercase tracking-widest hover:bg-gray-800 transition-all text-xs border border-black"
                     >
-                        I'm feeling compressed
+                        Create Entry
                     </button>
                     <button 
                         onClick={onBrowse}
-                        className="w-full py-4 bg-white border-2 border-black text-black font-bold uppercase tracking-widest hover:bg-gray-100 transition-all text-xs sm:text-sm"
+                        className="w-full py-3 bg-white border border-black text-black font-bold uppercase tracking-widest hover:bg-gray-50 transition-all text-xs"
                     >
-                        Open a Random Can
+                        Browse Archive
+                    </button>
+                     <button 
+                        onClick={onHistory}
+                        className="w-full py-3 text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-black underline"
+                    >
+                        View My Logs
                     </button>
                 </div>
             </div>
             {fishes.length === 0 && (
-                <div className="absolute bottom-10 text-xs font-bold text-gray-400 uppercase text-center px-4">
-                    The waters are empty. Start by opening a can.
+                <div className="absolute bottom-10 text-[10px] font-bold text-gray-400 uppercase text-center px-4 bg-white/50 py-1">
+                    System Empty. Begin Protocol.
                 </div>
             )}
        </div>

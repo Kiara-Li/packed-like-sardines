@@ -1,12 +1,14 @@
+
 import React, { useState, useEffect } from 'react';
 import InputStage from './components/InputStage';
 import CanBuilder from './components/CanBuilder';
 import BrowsingStage from './components/BrowsingStage';
 import ViewingCanStage from './components/ViewingCanStage';
 import HomeStage from './components/HomeStage';
+import HistoryStage from './components/HistoryStage';
 import { AppStage, UserCanData } from './types';
 import { generateFishAscii, generateCanLines } from './constants';
-import { saveCan, getRandomCan, getReleasedSardines } from './services/storageService';
+import { saveCan, getRandomCan, getReleasedSardines, simulateCommunityResponse } from './services/storageService';
 
 const App: React.FC = () => {
   const [stage, setStage] = useState<AppStage>(AppStage.INPUT);
@@ -29,7 +31,6 @@ const App: React.FC = () => {
     }
   }, []);
 
-  // State for the can we are viewing (someone else's)
   const [viewingCan, setViewingCan] = useState<UserCanData | null>(null);
 
   const handleInputComplete = (text: string) => {
@@ -45,6 +46,7 @@ const App: React.FC = () => {
   const handlePackagingComplete = (finalData: UserCanData) => {
     setUserData(finalData);
     saveCan(finalData); 
+    simulateCommunityResponse(finalData);
     setStage(AppStage.COMPLETED);
   };
 
@@ -64,6 +66,10 @@ const App: React.FC = () => {
     setStage(AppStage.BROWSING);
   };
 
+  const goToHistory = () => {
+    setStage(AppStage.HISTORY);
+  };
+
   const handleFindCan = (industry: string, adviceType: string) => {
     const found = getRandomCan(industry || undefined, adviceType || undefined);
     if (found) {
@@ -76,10 +82,9 @@ const App: React.FC = () => {
 
   const handleCloseViewing = () => {
     setViewingCan(null);
-    setStage(AppStage.HOME); // Return to home after viewing
+    setStage(AppStage.HOME); 
   };
 
-  // Generate the final can for the completed view
   const finalFish = generateFishAscii(userData.text.length, true);
   const finalCanLines = generateCanLines(finalFish, userData.industry);
 
@@ -91,17 +96,18 @@ const App: React.FC = () => {
             <HomeStage 
                 onStart={() => setStage(AppStage.INPUT)} 
                 onBrowse={goToBrowsing} 
+                onHistory={goToHistory}
             />
         )}
 
         {stage === AppStage.INPUT && (
-            <div className="w-full max-w-3xl mx-auto">
+            <div className="w-full max-w-3xl mx-auto h-full">
                 <InputStage onNext={handleInputComplete} />
             </div>
         )}
 
         {stage === AppStage.PACKAGING && (
-             <div className="w-full max-w-3xl mx-auto">
+             <div className="w-full max-w-3xl mx-auto h-full">
                 <CanBuilder 
                     initialData={userData} 
                     onComplete={handlePackagingComplete} 
@@ -111,7 +117,7 @@ const App: React.FC = () => {
         )}
 
         {stage === AppStage.COMPLETED && (
-            <div className="flex flex-col items-center justify-center h-full px-6 text-center animate-fade-in my-auto pb-20 pt-10 w-full max-w-3xl mx-auto overflow-hidden relative">
+            <div className="flex flex-col items-center justify-center h-full px-6 text-center animate-fade-in my-auto pb-20 pt-10 w-full max-w-3xl mx-auto overflow-hidden relative font-mono">
                 
                 {/* Animation: Can Rumble/Shake */}
                 <div className="mb-12 animate-rumble flex justify-center w-full">
@@ -120,44 +126,40 @@ const App: React.FC = () => {
                     </pre>
                 </div>
 
-                {/* Simulated Stack (Background items) */}
-                <div className="absolute bottom-0 opacity-10 pointer-events-none flex flex-col items-center scale-90 translate-y-20 z-[-1] w-full">
+                {/* Stack simulation */}
+                <div className="absolute bottom-0 opacity-5 pointer-events-none flex flex-col items-center scale-90 translate-y-20 z-[-1] w-full">
                      <pre className="text-[10px] leading-none whitespace-pre text-black font-bold font-mono mb-2 text-center">{finalCanLines.join('\n')}</pre>
                      <pre className="text-[10px] leading-none whitespace-pre text-black font-bold font-mono text-center">{finalCanLines.join('\n')}</pre>
                 </div>
 
                 <div className="opacity-0 animate-[fadeIn_0.5s_ease-out_0.5s_forwards] w-full max-w-md mx-auto">
-                    <h2 className="text-2xl font-bold mb-4 uppercase tracking-tighter">
+                    <h2 className="text-xl font-bold mb-4 uppercase tracking-tight">
                         Item Stored in Public Grid
                     </h2>
-                    <p className="text-sm text-gray-600 mb-10 font-bold mx-auto">
-                        Your worry has been successfully compressed and indexed. 
-                        <br/>
-                        <span className="bg-black text-white px-1">Global Line 4</span> is now circulating your can.
-                    </p>
                     
-                    <div className="mx-auto p-6 border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white w-full max-w-xs text-left transform -rotate-1 mb-12">
-                        <p className="text-xs uppercase font-bold border-b-2 border-black pb-2 mb-4 flex justify-between">
-                            <span>Manifest</span>
-                            <span>#{userData.id.slice(0,6)}</span>
-                        </p>
-                        <p className="text-sm mb-2 font-bold"><span className="bg-black text-white px-1 mr-2">IND</span> {userData.industry}</p>
-                        <p className="text-sm mb-2 font-bold"><span className="bg-black text-white px-1 mr-2">REQ</span> {userData.adviceNeeded}</p>
-                        <div className="mt-4 pt-2 border-t border-black text-xs text-gray-500 uppercase">
-                            Status: Available for Community
+                    {/* Flat Ticket Style for Success Message */}
+                    <div className="mx-auto p-4 border border-black bg-white w-full max-w-xs text-left mb-12">
+                        <div className="flex justify-between border-b border-black pb-2 mb-4">
+                            <span className="text-[10px] uppercase font-bold">Manifest</span>
+                            <span className="text-[10px] font-mono">#{userData.id.slice(0,6)}</span>
+                        </div>
+                        <p className="text-sm mb-1 font-normal text-black"><span className="text-[10px] uppercase text-gray-500 mr-2">IND</span> {userData.industry}</p>
+                        <p className="text-sm mb-4 font-normal text-black"><span className="text-[10px] uppercase text-gray-500 mr-2">REQ</span> {userData.adviceNeeded}</p>
+                        <div className="pt-2 border-t border-black text-[10px] text-gray-500 uppercase">
+                            Status: In Circulation (Line 4)
                         </div>
                     </div>
                     
                     <div className="space-y-4 w-full max-w-xs mx-auto">
                          <button 
                             onClick={handleRestart}
-                            className="block w-full px-8 py-3 bg-white border-2 border-black text-black font-bold uppercase tracking-widest hover:bg-gray-100 transition-colors"
+                            className="block w-full px-8 py-3 bg-white border border-black text-black font-bold uppercase tracking-widest hover:bg-gray-100 transition-colors"
                         >
                             Process Another
                         </button>
                         <button 
                             onClick={() => setStage(AppStage.HOME)}
-                            className="block w-full px-8 py-3 bg-black text-white border-2 border-black font-bold uppercase tracking-widest hover:bg-gray-800 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)]"
+                            className="block w-full px-8 py-3 bg-black text-white border border-black font-bold uppercase tracking-widest hover:bg-gray-800 transition-colors"
                         >
                             Return to Main Station
                         </button>
@@ -167,13 +169,19 @@ const App: React.FC = () => {
         )}
 
         {stage === AppStage.BROWSING && (
-             <div className="w-full max-w-3xl mx-auto">
+             <div className="w-full max-w-3xl mx-auto h-full">
                 <BrowsingStage onFindCan={handleFindCan} onBack={() => setStage(AppStage.HOME)} />
             </div>
         )}
+        
+        {stage === AppStage.HISTORY && (
+            <div className="w-full max-w-3xl mx-auto h-full">
+               <HistoryStage onBack={() => setStage(AppStage.HOME)} />
+           </div>
+        )}
 
         {stage === AppStage.VIEWING && viewingCan && (
-             <div className="w-full max-w-3xl mx-auto">
+             <div className="w-full max-w-3xl mx-auto h-full">
                 <ViewingCanStage 
                     canData={viewingCan} 
                     onBack={() => setStage(AppStage.BROWSING)} 

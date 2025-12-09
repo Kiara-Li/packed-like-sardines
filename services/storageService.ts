@@ -34,7 +34,7 @@ const MOCK_DATA: UserCanData[] = [
   }
 ];
 
-// --- CANS DATABASE ---
+// --- CANS DATABASE (My Created Cans) ---
 
 export const saveCan = (can: UserCanData): void => {
   const existing = getAllCans();
@@ -69,11 +69,10 @@ export const getRandomCan = (filterIndustry?: string, filterAdvice?: string): Us
   return all[randomIndex];
 };
 
-// --- USER HISTORY (RELEASED SARDINES) ---
+// --- USER HISTORY / RESPONSES (Released Sardines) ---
 
 export const saveReleasedSardine = (sardine: ReleasedSardine): void => {
     const existing = getReleasedSardines();
-    // Avoid duplicates if needed, but here we assume every interaction is unique
     const updated = [sardine, ...existing];
     localStorage.setItem(HISTORY_KEY, JSON.stringify(updated));
 };
@@ -82,4 +81,39 @@ export const getReleasedSardines = (): ReleasedSardine[] => {
     const stored = localStorage.getItem(HISTORY_KEY);
     if (!stored) return [];
     return JSON.parse(stored);
+};
+
+// Get responses specifically for a can ID (To show "My Received Advice")
+export const getResponsesForCan = (canId: string): ReleasedSardine[] => {
+    const allReleased = getReleasedSardines();
+    return allReleased.filter(r => r.originalCanId === canId);
+};
+
+// --- SIMULATION (For Demo Purposes Only) ---
+// Since there is no backend, we simulate a "stranger" replying to your can
+export const simulateCommunityResponse = (can: UserCanData) => {
+    const responses = [
+        "[ME TOO] Hang in there, I feel exactly the same.",
+        "[HUG] Sending digital warmth your way.",
+        "[RESPECT] You are stronger than you think.",
+        "[REAL] The commute is the only quiet time I get.",
+        "[IT PASSES] This too shall pass. Keep swimming.",
+        "[ME TOO] [REAL] Literally me yesterday."
+    ];
+    
+    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+    
+    const fakeResponse: ReleasedSardine = {
+        id: crypto.randomUUID(),
+        originalCanId: can.id,
+        textLength: can.text.length,
+        adviceGiven: randomResponse,
+        industry: can.industry,
+        timestamp: new Date().toISOString()
+    };
+
+    // Simulate delay
+    setTimeout(() => {
+        saveReleasedSardine(fakeResponse);
+    }, 5000); // 5 seconds after creation, a "ghost" replies
 };

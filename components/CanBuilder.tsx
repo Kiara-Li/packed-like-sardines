@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { UserCanData } from '../types';
 import { generateFishAscii, generateCanLines } from '../constants';
@@ -36,49 +37,52 @@ const CanBuilder: React.FC<CanBuilderProps> = ({ initialData, onComplete, onBack
     }, 1500);
   };
 
-  // Generate the specific fish based on the user's input text length
   const fishAscii = generateFishAscii(initialData.text.length, true);
-  
-  // Generate the can lines dynamically with Industry texture
   const canLines = generateCanLines(fishAscii, industry);
 
   return (
-    <div className="flex flex-col items-center w-full max-w-lg mx-auto p-4 animate-fade-in">
-      <h2 className="text-xl mb-8 font-bold text-center uppercase tracking-widest border-b-2 border-black pb-2 font-mono">
-        [ Canning Station ]
-      </h2>
+    <div className="flex flex-col items-center w-full max-w-lg mx-auto p-4 animate-fade-in font-mono">
+      
+      {/* Header */}
+      <div className="w-full border-b border-black pb-2 mb-8 flex justify-between items-baseline">
+          <h2 className="text-lg font-bold uppercase tracking-tight">Canning Station</h2>
+          <span className="text-[10px] uppercase">Step 2/3</span>
+      </div>
 
-      {/* The Visual Can */}
-      <div className="mb-10 relative group flex justify-center min-h-[200px] items-center w-full">
-        <pre className="text-xs sm:text-sm md:text-base leading-none whitespace-pre text-black font-bold font-mono transition-all duration-300 text-center inline-block">
+      {/* The Visual Can Preview - Minimalist */}
+      <div className="mb-10 relative group flex justify-center min-h-[180px] items-center w-full">
+        <pre className="text-xs sm:text-sm leading-none whitespace-pre text-black font-bold font-mono text-center inline-block">
           {canLines.join('\n')}
         </pre>
         
-        {/* Visual Sticker Overlay - Positioned roughly over the center/bottom */}
+        {/* Floating Label - Flat Border */}
         {(industry || ingredients.length > 1) && (
-            <div className="absolute top-[60%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white text-black p-2 sm:p-3 text-xs font-bold rotate-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] border-2 border-black max-w-[200px] z-10 font-mono">
-                <div className="uppercase border-b-2 border-black mb-2 pb-1 flex justify-between">
-                    <span>NET WT: HEAVY</span>
-                    <span>{new Date().toLocaleDateString()}</span>
+            <div className="absolute top-[60%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white text-black p-2 text-[10px] border border-black max-w-[180px] z-10 font-mono rotate-2">
+                <div className="uppercase border-b border-black mb-1 pb-1 flex justify-between">
+                    <span>WT: HVY</span>
+                    <span>{new Date().toLocaleDateString(undefined, {month:'numeric', day:'numeric'})}</span>
                 </div>
-                {industry && <div className="mb-2 text-sm bg-black text-white inline-block px-1">IND: {industry}</div>}
-                <div className="text-[10px] leading-tight uppercase">
-                    INGR: {ingredients.join(', ')}
+                {industry && <div className="mb-1 bg-black text-white inline-block px-1">IND: {industry}</div>}
+                <div className="text-[9px] leading-tight uppercase text-gray-600">
+                    {ingredients.join(', ')}
                 </div>
             </div>
         )}
       </div>
 
-      {/* The Form */}
-      <div className="w-full space-y-6 border-2 border-black p-6 bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-        <div className="flex flex-col space-y-2">
-          <label className="text-xs font-bold uppercase font-mono">Select Line / Industry</label>
+      {/* The Form - Receipt Style */}
+      <div className="w-full space-y-0 border-t border-black">
+        
+        {/* Industry Select */}
+        <div className="flex flex-col py-4 border-b border-black">
+          <label className="text-[10px] font-bold uppercase text-gray-500 mb-2">Select Line / Industry</label>
           <select 
             value={industry} 
             onChange={(e) => setIndustry(e.target.value)}
-            className="bg-white border-b-2 border-black py-2 focus:outline-none text-sm font-bold font-mono"
+            className="bg-transparent text-sm font-normal focus:outline-none font-mono w-full appearance-none rounded-none"
+            style={{ backgroundImage: 'none' }} // Remove default arrow if possible or keep standard
           >
-            <option value="" disabled>Choose to apply packaging...</option>
+            <option value="" disabled>Select origin line...</option>
             <option value="Tech">Line 1: Tech / Dev</option>
             <option value="Finance">Line 2: Finance / Corp</option>
             <option value="Creative">Line 3: Creative / Art</option>
@@ -89,14 +93,15 @@ const CanBuilder: React.FC<CanBuilderProps> = ({ initialData, onComplete, onBack
           </select>
         </div>
 
-        <div className="flex flex-col space-y-2">
-          <label className="text-xs font-bold uppercase font-mono">Required Output</label>
+        {/* Output Select */}
+        <div className="flex flex-col py-4 border-b border-black">
+          <label className="text-[10px] font-bold uppercase text-gray-500 mb-2">Required Output</label>
           <div className="flex flex-wrap gap-2">
             {['Listen', 'Advice', 'Quit!', 'Hug'].map((opt) => (
               <button
                 key={opt}
                 onClick={() => setAdviceType(opt)}
-                className={`px-4 py-2 text-xs font-bold border-2 transition-all font-mono ${
+                className={`px-3 py-2 text-xs border transition-colors font-mono uppercase ${
                   adviceType === opt 
                     ? 'bg-black text-white border-black' 
                     : 'bg-white text-gray-400 border-gray-200 hover:border-black hover:text-black'
@@ -109,20 +114,21 @@ const CanBuilder: React.FC<CanBuilderProps> = ({ initialData, onComplete, onBack
         </div>
       </div>
 
+      {/* Actions */}
       <div className="flex w-full gap-4 mt-8">
         <button 
             onClick={onBack}
-            className="flex-1 py-4 text-sm font-bold border-2 border-transparent text-gray-500 hover:text-red-600 hover:underline uppercase tracking-widest font-mono"
+            className="flex-1 py-4 text-xs font-bold border border-transparent text-gray-400 hover:text-black hover:border-black uppercase tracking-widest"
         >
             Recycle
         </button>
         <button 
             onClick={handleSeal}
             disabled={!industry || isSealing}
-            className={`flex-1 py-4 text-sm font-bold border-2 uppercase tracking-widest transition-all font-mono ${
+            className={`flex-1 py-4 text-xs font-bold border uppercase tracking-widest transition-colors ${
                 industry 
-                ? 'bg-black text-white border-black hover:bg-gray-800 shadow-[4px_4px_0px_0px_rgba(100,100,100,0.5)]' 
-                : 'bg-gray-100 text-gray-400 border-gray-100 cursor-not-allowed'
+                ? 'bg-black text-white border-black hover:bg-gray-800' 
+                : 'bg-gray-100 text-gray-300 border-gray-100 cursor-not-allowed'
             }`}
         >
             {isSealing ? 'Sealing...' : 'Seal Can'}

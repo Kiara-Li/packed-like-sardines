@@ -5,7 +5,8 @@ export enum AppStage {
   PACKAGING = 'PACKAGING',
   COMPLETED = 'COMPLETED',
   BROWSING = 'BROWSING',
-  VIEWING = 'VIEWING'
+  VIEWING = 'VIEWING',
+  HISTORY = 'HISTORY'
 }
 
 export interface UserCanData {
@@ -22,7 +23,7 @@ export interface ReleasedSardine {
   id: string; // Unique ID for this interaction
   originalCanId: string;
   textLength: number;
-  adviceGiven: string;
+  adviceGiven: string; // Includes stamps like [HUG]
   timestamp: string;
   industry: string;
 }
