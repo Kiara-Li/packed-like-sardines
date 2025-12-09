@@ -31,62 +31,85 @@ export const SAD_KEYWORDS = [
 ];
 
 // Helper to generate dynamic fish ASCII
-// 10 chars = <º))))>< (4 segments)
-// 20 chars = <º)))))>< (5 segments)
 export const generateFishAscii = (charCount: number, mouthOpen: boolean): string => {
     // Base 4 segments
     const segments = 4 + Math.floor(charCount / 10);
-    
-    // Head logic
-    // Open: <º
-    // Closed: =º 
     const head = mouthOpen ? '<º' : '=º';
-    
     const body = ')'.repeat(segments);
     const tail = '><';
-    
     return `${head}${body}${tail}`;
 };
 
-// Generates an "exquisite" ASCII can that wraps the content
-export const generateCanLines = (fishAscii: string): string[] => {
-    const fishLength = fishAscii.length;
-    const padding = 8; // generous padding
-    const minWidth = 32;
-    const innerWidth = Math.max(minWidth, fishLength + padding);
-    
-    const lineTop      = '  .' + '─'.repeat(innerWidth) + '.  ';
-    const lineRimTop   = ' /' + ' '.repeat(innerWidth) + '\\ ';
-    
-    // Detailed Lid
-    const pullTabStart = Math.floor((innerWidth - 10) / 2); // Center the "lid" art roughly
-    const lidSpace = ' '.repeat(innerWidth);
-    const lidLine = '| ' + ' '.repeat(innerWidth) + ' |';
+// Helper for centering text within a fixed width
+const centerText = (text: string, width: number, filler: string = ' '): string => {
+    const totalPadding = Math.max(0, width - text.length);
+    const padLeft = Math.floor(totalPadding / 2);
+    const padRight = totalPadding - padLeft;
+    return filler.repeat(padLeft) + text + filler.repeat(padRight);
+};
 
-    // A simple "pull tab" graphic on the lid
-    // We'll just keep the lid simple but textured
-    const lineLid1     = '| ' + ' '.repeat(5) + '_______' + ' '.repeat(innerWidth - 12) + ' |';
-    const lineLid2     = '| ' + ' '.repeat(4) + '(  PULL  )' + ' '.repeat(innerWidth - 14) + ' |';
+// Generates an "exquisite" ASCII can that wraps the content
+export const generateCanLines = (fishAscii: string, industry: string = ''): string[] => {
+    const fishLength = fishAscii.length;
+    const minInnerWidth = 30;
+    // Ensure width is even for better centering
+    let innerWidth = Math.max(minInnerWidth, fishLength + 6);
+    if (innerWidth % 2 !== 0) innerWidth++;
+
+    // Industry specific textures
+    let lidTexture = '_______';
+    let wallChar = '|';
     
-    const lineWall     = '| ' + ' '.repeat(innerWidth) + ' |';
+    // Define subtle textures to keep alignment safe
+    switch (industry) {
+        case 'Tech':      lidTexture = '0101010'; break;
+        case 'Finance':   lidTexture = '$$$$$$$'; break;
+        case 'Creative':  lidTexture = '~~~~~~~'; break;
+        case 'Service':   lidTexture = '.......'; break;
+        case 'Student':   lidTexture = 'AAAAAAA'; break;
+        case 'Unemployed':lidTexture = '_______'; break;
+        default:          lidTexture = '_______'; break;
+    }
+
+    // --- CONSTRUCTION ---
+    // Top Cap:  ________ 
+    // Rim Top: /        \
+    // Walls:  |          |
+    // Bottom: |__________|
+    // Rim Bot: \________/
+
+    const roof      = ' ' + '_'.repeat(innerWidth) + ' ';
+    const rimTop    = '/' + ' '.repeat(innerWidth) + '\\';
     
-    // Center the fish
-    const leftPad = Math.floor((innerWidth - fishLength) / 2);
-    const rightPad = innerWidth - fishLength - leftPad;
-    const lineFish     = '| ' + ' '.repeat(leftPad) + fishAscii + ' '.repeat(rightPad) + ' |';
+    // Lid Section
+    // Center the texture
+    const lidContent = centerText(lidTexture, innerWidth, ' ');
+    const lineLid1   = wallChar + lidContent + wallChar;
     
-    const lineBottom   = '|' + '_'.repeat(innerWidth) + '|';
-    const lineCurve    = ' \\' + '_'.repeat(innerWidth) + '/ ';
+    // Pull Tab Section
+    const pullTab    = '( PULL )';
+    const lineLid2   = wallChar + centerText(pullTab, innerWidth, ' ') + wallChar;
+    
+    // Spacer
+    const lineSpace  = wallChar + ' '.repeat(innerWidth) + wallChar;
+
+    // Fish Section
+    const lineFish   = wallChar + centerText(fishAscii, innerWidth, ' ') + wallChar;
+    
+    // Bottom Section
+    // The bottom wall needs to be solid to look like the base
+    const lineBottom = wallChar + '_'.repeat(innerWidth) + wallChar;
+    const rimBottom  = '\\' + '_'.repeat(innerWidth) + '/';
 
     return [
-        lineTop,
-        lineRimTop,
+        roof,
+        rimTop,
         lineLid1,
         lineLid2,
-        lineWall,
+        lineSpace,
         lineFish,
-        lineWall,
+        lineSpace,
         lineBottom,
-        lineCurve
+        rimBottom
     ];
 };

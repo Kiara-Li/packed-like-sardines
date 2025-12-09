@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import InputStage from './components/InputStage';
 import CanBuilder from './components/CanBuilder';
@@ -82,7 +81,7 @@ const App: React.FC = () => {
 
   // Generate the final can for the completed view
   const finalFish = generateFishAscii(userData.text.length, true);
-  const finalCanLines = generateCanLines(finalFish);
+  const finalCanLines = generateCanLines(finalFish, userData.industry);
 
   return (
     <div className="min-h-screen bg-paper-white text-ink-black font-mono flex flex-col">
@@ -112,43 +111,57 @@ const App: React.FC = () => {
         )}
 
         {stage === AppStage.COMPLETED && (
-            <div className="flex flex-col items-center justify-center h-full px-6 text-center animate-fade-in my-auto pb-20 pt-10 w-full max-w-3xl mx-auto">
-                <pre className="text-xs sm:text-sm leading-none whitespace-pre text-black font-bold font-mono mb-8">
-                    {finalCanLines.join('\n')}
-                </pre>
-
-                <h2 className="text-2xl font-bold mb-4 uppercase tracking-tighter">Production Complete</h2>
-                <p className="text-sm text-gray-600 mb-10 max-w-sm font-bold">
-                    Your worry has been successfully compressed. 
-                    <br/>
-                    It is now circulating on Line 4.
-                </p>
+            <div className="flex flex-col items-center justify-center h-full px-6 text-center animate-fade-in my-auto pb-20 pt-10 w-full max-w-3xl mx-auto overflow-hidden relative">
                 
-                <div className="p-6 border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white w-full max-w-xs text-left transform -rotate-1">
-                    <p className="text-xs uppercase font-bold border-b-2 border-black pb-2 mb-4 flex justify-between">
-                        <span>Manifest</span>
-                        <span>#{userData.id.slice(0,6)}</span>
-                    </p>
-                    <p className="text-sm mb-2 font-bold"><span className="bg-black text-white px-1 mr-2">IND</span> {userData.industry}</p>
-                    <p className="text-sm mb-2 font-bold"><span className="bg-black text-white px-1 mr-2">REQ</span> {userData.adviceNeeded}</p>
-                    <div className="mt-4 pt-2 border-t border-black text-xs text-gray-500 uppercase">
-                        Stored: {new Date(userData.timestamp).toLocaleTimeString()}
-                    </div>
+                {/* Animation: Can Rumble/Shake */}
+                <div className="mb-12 animate-rumble flex justify-center w-full">
+                    <pre className="text-xs sm:text-sm leading-none whitespace-pre text-black font-bold font-mono text-center inline-block">
+                        {finalCanLines.join('\n')}
+                    </pre>
                 </div>
-                
-                <div className="mt-12 space-y-4 w-full max-w-xs">
-                     <button 
-                        onClick={handleRestart}
-                        className="block w-full px-8 py-3 bg-white border-2 border-black text-black font-bold uppercase tracking-widest hover:bg-gray-100 transition-colors"
-                    >
-                        Process Another
-                    </button>
-                    <button 
-                        onClick={() => setStage(AppStage.HOME)}
-                        className="block w-full px-8 py-3 bg-black text-white border-2 border-black font-bold uppercase tracking-widest hover:bg-gray-800 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)]"
-                    >
-                        Return to Main Station
-                    </button>
+
+                {/* Simulated Stack (Background items) */}
+                <div className="absolute bottom-0 opacity-10 pointer-events-none flex flex-col items-center scale-90 translate-y-20 z-[-1] w-full">
+                     <pre className="text-[10px] leading-none whitespace-pre text-black font-bold font-mono mb-2 text-center">{finalCanLines.join('\n')}</pre>
+                     <pre className="text-[10px] leading-none whitespace-pre text-black font-bold font-mono text-center">{finalCanLines.join('\n')}</pre>
+                </div>
+
+                <div className="opacity-0 animate-[fadeIn_0.5s_ease-out_0.5s_forwards] w-full max-w-md mx-auto">
+                    <h2 className="text-2xl font-bold mb-4 uppercase tracking-tighter">
+                        Item Stored in Public Grid
+                    </h2>
+                    <p className="text-sm text-gray-600 mb-10 font-bold mx-auto">
+                        Your worry has been successfully compressed and indexed. 
+                        <br/>
+                        <span className="bg-black text-white px-1">Global Line 4</span> is now circulating your can.
+                    </p>
+                    
+                    <div className="mx-auto p-6 border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white w-full max-w-xs text-left transform -rotate-1 mb-12">
+                        <p className="text-xs uppercase font-bold border-b-2 border-black pb-2 mb-4 flex justify-between">
+                            <span>Manifest</span>
+                            <span>#{userData.id.slice(0,6)}</span>
+                        </p>
+                        <p className="text-sm mb-2 font-bold"><span className="bg-black text-white px-1 mr-2">IND</span> {userData.industry}</p>
+                        <p className="text-sm mb-2 font-bold"><span className="bg-black text-white px-1 mr-2">REQ</span> {userData.adviceNeeded}</p>
+                        <div className="mt-4 pt-2 border-t border-black text-xs text-gray-500 uppercase">
+                            Status: Available for Community
+                        </div>
+                    </div>
+                    
+                    <div className="space-y-4 w-full max-w-xs mx-auto">
+                         <button 
+                            onClick={handleRestart}
+                            className="block w-full px-8 py-3 bg-white border-2 border-black text-black font-bold uppercase tracking-widest hover:bg-gray-100 transition-colors"
+                        >
+                            Process Another
+                        </button>
+                        <button 
+                            onClick={() => setStage(AppStage.HOME)}
+                            className="block w-full px-8 py-3 bg-black text-white border-2 border-black font-bold uppercase tracking-widest hover:bg-gray-800 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)]"
+                        >
+                            Return to Main Station
+                        </button>
+                    </div>
                 </div>
             </div>
         )}

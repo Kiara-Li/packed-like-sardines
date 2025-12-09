@@ -39,8 +39,8 @@ const CanBuilder: React.FC<CanBuilderProps> = ({ initialData, onComplete, onBack
   // Generate the specific fish based on the user's input text length
   const fishAscii = generateFishAscii(initialData.text.length, true);
   
-  // Generate the can lines dynamically
-  const canLines = generateCanLines(fishAscii);
+  // Generate the can lines dynamically with Industry texture
+  const canLines = generateCanLines(fishAscii, industry);
 
   return (
     <div className="flex flex-col items-center w-full max-w-lg mx-auto p-4 animate-fade-in">
@@ -49,8 +49,8 @@ const CanBuilder: React.FC<CanBuilderProps> = ({ initialData, onComplete, onBack
       </h2>
 
       {/* The Visual Can */}
-      <div className="mb-10 relative group flex justify-center">
-        <pre className="text-xs sm:text-sm md:text-base leading-none whitespace-pre text-black font-bold font-mono">
+      <div className="mb-10 relative group flex justify-center min-h-[200px] items-center w-full">
+        <pre className="text-xs sm:text-sm md:text-base leading-none whitespace-pre text-black font-bold font-mono transition-all duration-300 text-center inline-block">
           {canLines.join('\n')}
         </pre>
         
@@ -78,7 +78,7 @@ const CanBuilder: React.FC<CanBuilderProps> = ({ initialData, onComplete, onBack
             onChange={(e) => setIndustry(e.target.value)}
             className="bg-white border-b-2 border-black py-2 focus:outline-none text-sm font-bold font-mono"
           >
-            <option value="" disabled>Choose...</option>
+            <option value="" disabled>Choose to apply packaging...</option>
             <option value="Tech">Line 1: Tech / Dev</option>
             <option value="Finance">Line 2: Finance / Corp</option>
             <option value="Creative">Line 3: Creative / Art</option>

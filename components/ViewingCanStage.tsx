@@ -26,7 +26,8 @@ const ViewingCanStage: React.FC<ViewingCanStageProps> = ({ canData, onBack, onGo
 
   // Regenerate visual assets based on the stored data
   const fishAscii = generateFishAscii(canData.text.length, false); 
-  const canLines = generateCanLines(fishAscii);
+  // PASS INDUSTRY HERE
+  const canLines = generateCanLines(fishAscii, canData.industry);
 
   // Handle Slider Change
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -128,8 +129,8 @@ const ViewingCanStage: React.FC<ViewingCanStageProps> = ({ canData, onBack, onGo
         <div className="absolute -left-3 top-1/2 w-6 h-6 bg-paper-white rounded-full border-r-2 border-black"></div>
         <div className="absolute -right-3 top-1/2 w-6 h-6 bg-paper-white rounded-full border-l-2 border-black"></div>
 
-        <div className="flex flex-col items-center mb-6">
-            <pre className="text-[10px] sm:text-xs leading-none whitespace-pre text-black font-bold font-mono opacity-80">
+        <div className="flex flex-col items-center mb-6 w-full">
+            <pre className="text-[10px] sm:text-xs leading-none whitespace-pre text-black font-bold font-mono opacity-80 text-center inline-block">
                 {canLines.join('\n')}
             </pre>
             {canData.ingredients && (

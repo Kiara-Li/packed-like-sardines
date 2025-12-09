@@ -61,6 +61,7 @@
               'float': 'float 3s ease-in-out infinite',
               'fall': 'fall 1.5s linear forwards',
               'fade-in': 'fadeIn 0.5s ease-out forwards',
+              'rumble': 'rumble 0.5s cubic-bezier(.36,.07,.19,.97) both',
             },
             keyframes: {
               blink: {
@@ -78,6 +79,12 @@
               fadeIn: {
                 '0%': { opacity: '0', transform: 'translateY(10px)' },
                 '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              rumble: {
+                '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' },
+                '20%, 80%': { transform: 'translate3d(2px, 0, 0)' },
+                '30%, 50%, 70%': { transform: 'translate3d(-2px, 2px, 0) scale(1.02)' },
+                '40%, 60%': { transform: 'translate3d(2px, -2px, 0) scale(0.98)' }
               }
             }
           }
