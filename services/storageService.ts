@@ -1,5 +1,6 @@
 
 import { UserCanData, ReleasedSardine } from '../types';
+import { SUBWAY_STATIONS } from '../constants';
 
 const STORAGE_KEY = 'subway_sardine_cans_v1';
 const HISTORY_KEY = 'subway_sardine_released_v1';
@@ -12,7 +13,8 @@ const MOCK_DATA: UserCanData[] = [
     adviceNeeded: 'Quit!',
     mood: 'tired',
     timestamp: new Date().toISOString(),
-    ingredients: ['100% Zoom Fatigue', 'Lost Weekend']
+    ingredients: ['100% Zoom Fatigue', 'Lost Weekend'],
+    stationId: 'S1'
   },
   {
     id: 'mock-2',
@@ -21,7 +23,8 @@ const MOCK_DATA: UserCanData[] = [
     adviceNeeded: 'Advice',
     mood: 'confused',
     timestamp: new Date().toISOString(),
-    ingredients: ['Excel Dust', 'Corporate Tears']
+    ingredients: ['Excel Dust', 'Corporate Tears'],
+    stationId: 'S9'
   },
   {
     id: 'mock-3',
@@ -30,7 +33,8 @@ const MOCK_DATA: UserCanData[] = [
     adviceNeeded: 'Hug',
     mood: 'sad',
     timestamp: new Date().toISOString(),
-    ingredients: ['Pixelated Hope', 'Hex Code #000000']
+    ingredients: ['Pixelated Hope', 'Hex Code #000000'],
+    stationId: 'S3'
   }
 ];
 
@@ -89,8 +93,26 @@ export const getResponsesForCan = (canId: string): ReleasedSardine[] => {
     return allReleased.filter(r => r.originalCanId === canId);
 };
 
+// --- MAP SIGNALS (Ghost Data + Real Data) ---
+
+// This function returns a mix of real user cans and "ambient" signals for the map
+export const getMapSignals = (): UserCanData[] => {
+    const realCans = getAllCans().filter(c => c.stationId); // Only cans with location
+    
+    // Ambient signals to make the map feel alive
+    const ambientSignals: UserCanData[] = [
+        { id: 'g-1', text: 'Headphones on, world off. Please don\'t look at me.', industry: 'Student', adviceNeeded: 'Listen', mood: 'quiet', timestamp: new Date().toISOString(), stationId: 'S4', ingredients: ['Static Noise'] },
+        { id: 'g-2', text: 'Missed the express train. Again. Is this a metaphor?', industry: 'Service', adviceNeeded: 'Hug', mood: 'sad', timestamp: new Date().toISOString(), stationId: 'S5', ingredients: ['Late Fee'] },
+        { id: 'g-3', text: 'Just saw my ex on the platform. I need to dissolve.', industry: 'Creative', adviceNeeded: 'Quit!', mood: 'panic', timestamp: new Date().toISOString(), stationId: 'S11', ingredients: ['Panic Sweat'] },
+        { id: 'g-4', text: 'Someone is eating a tuna sandwich in this car. Why.', industry: 'Other', adviceNeeded: 'Listen', mood: 'angry', timestamp: new Date().toISOString(), stationId: 'S7', ingredients: ['Smell of Regret'] },
+        { id: 'g-5', text: 'Does anyone else feel like a ghost in a machine?', industry: 'Tech', adviceNeeded: 'Advice', mood: 'existential', timestamp: new Date().toISOString(), stationId: 'S1', ingredients: ['Binary Tears'] },
+        { id: 'g-6', text: 'My coffee spilled. My day is over.', industry: 'Finance', adviceNeeded: 'Hug', mood: 'sad', timestamp: new Date().toISOString(), stationId: 'S9', ingredients: ['Stain Remover'] },
+    ];
+
+    return [...realCans, ...ambientSignals];
+};
+
 // --- SIMULATION (For Demo Purposes Only) ---
-// Since there is no backend, we simulate a "stranger" replying to your can
 export const simulateCommunityResponse = (can: UserCanData) => {
     const responses = [
         "[ME TOO] Hang in there, I feel exactly the same.",
@@ -109,11 +131,12 @@ export const simulateCommunityResponse = (can: UserCanData) => {
         textLength: can.text.length,
         adviceGiven: randomResponse,
         industry: can.industry,
+        stationId: can.stationId, // Keep locality
         timestamp: new Date().toISOString()
     };
 
     // Simulate delay
     setTimeout(() => {
         saveReleasedSardine(fakeResponse);
-    }, 5000); // 5 seconds after creation, a "ghost" replies
+    }, 5000); 
 };

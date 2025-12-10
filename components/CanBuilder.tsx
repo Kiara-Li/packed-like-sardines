@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { UserCanData } from '../types';
-import { generateFishAscii, generateCanLines } from '../constants';
+import { generateFishAscii, generateCanLines, SUBWAY_STATIONS } from '../constants';
 import { analyzeCanContent } from '../services/geminiService';
 
 interface CanBuilderProps {
@@ -13,6 +13,7 @@ interface CanBuilderProps {
 const CanBuilder: React.FC<CanBuilderProps> = ({ initialData, onComplete, onBack }) => {
   const [industry, setIndustry] = useState('');
   const [adviceType, setAdviceType] = useState('Just listen');
+  const [stationId, setStationId] = useState('');
   const [ingredients, setIngredients] = useState<string[]>(['Processing...']);
   const [isSealing, setIsSealing] = useState(false);
 
@@ -32,6 +33,7 @@ const CanBuilder: React.FC<CanBuilderProps> = ({ initialData, onComplete, onBack
         ...initialData,
         industry,
         adviceNeeded: adviceType,
+        stationId: stationId || undefined,
         ingredients
       });
     }, 1500);
@@ -63,7 +65,8 @@ const CanBuilder: React.FC<CanBuilderProps> = ({ initialData, onComplete, onBack
                     <span>{new Date().toLocaleDateString(undefined, {month:'numeric', day:'numeric'})}</span>
                 </div>
                 {industry && <div className="mb-1 bg-black text-white inline-block px-1">IND: {industry}</div>}
-                <div className="text-[9px] leading-tight uppercase text-gray-600">
+                {stationId && <div className="mb-1 text-[9px] uppercase border border-black px-1 mt-1">LOC: {SUBWAY_STATIONS.find(s=>s.id === stationId)?.name}</div>}
+                <div className="text-[9px] leading-tight uppercase text-gray-600 mt-1">
                     {ingredients.join(', ')}
                 </div>
             </div>
@@ -80,7 +83,6 @@ const CanBuilder: React.FC<CanBuilderProps> = ({ initialData, onComplete, onBack
             value={industry} 
             onChange={(e) => setIndustry(e.target.value)}
             className="bg-transparent text-sm font-normal focus:outline-none font-mono w-full appearance-none rounded-none"
-            style={{ backgroundImage: 'none' }} // Remove default arrow if possible or keep standard
           >
             <option value="" disabled>Select origin line...</option>
             <option value="Tech">Line 1: Tech / Dev</option>
@@ -91,6 +93,27 @@ const CanBuilder: React.FC<CanBuilderProps> = ({ initialData, onComplete, onBack
             <option value="Unemployed">Line 0: Between Jobs</option>
             <option value="Other">Line X: Other</option>
           </select>
+        </div>
+
+        {/* Location Signal (New) */}
+        <div className="flex flex-col py-4 border-b border-black">
+            <div className="flex justify-between items-center mb-2">
+                 <label className="text-[10px] font-bold uppercase text-gray-500">Attach Location Signal</label>
+                 <span className="text-[9px] uppercase text-gray-400">Optional</span>
+            </div>
+            
+            <select 
+                value={stationId} 
+                onChange={(e) => setStationId(e.target.value)}
+                className="bg-transparent text-sm font-normal focus:outline-none font-mono w-full appearance-none rounded-none"
+            >
+                <option value="">-- No Signal --</option>
+                {SUBWAY_STATIONS.map(st => (
+                    <option key={st.id} value={st.id}>
+                        {st.name} ({st.line})
+                    </option>
+                ))}
+            </select>
         </div>
 
         {/* Output Select */}

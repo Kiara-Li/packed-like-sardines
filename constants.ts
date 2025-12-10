@@ -1,4 +1,6 @@
 
+import { StationNode } from './types';
+
 // Keywords that trigger the "crying" state
 export const SAD_KEYWORDS = [
   // Chinese
@@ -29,6 +31,34 @@ export const SAD_KEYWORDS = [
   'alone', 'lonely', 'helpless', 'no one', 'no support', 'can’t anymore', 
   'giving up', 'hopeless', 'powerless', 'isolated'
 ];
+
+// --- MAP DATA (Abstract Grid) ---
+export const SUBWAY_STATIONS: StationNode[] = [
+    // Line 1 (Left - Tech/Creative)
+    { id: 'S1', name: 'Canal St', x: 20, y: 80, line: 'Line A' },
+    { id: 'S2', name: 'Houston', x: 20, y: 65, line: 'Line A' },
+    { id: 'S3', name: '14th St', x: 20, y: 50, line: 'Line A' },
+    { id: 'S4', name: 'Times Sq', x: 35, y: 35, line: 'Line A' }, // Transfer
+    
+    // Line 2 (Center - General)
+    { id: 'S5', name: 'Fulton', x: 50, y: 85, line: 'Line B' },
+    { id: 'S6', name: 'Brooklyn Br', x: 50, y: 75, line: 'Line B' },
+    { id: 'S7', name: 'Union Sq', x: 50, y: 55, line: 'Line B' },
+    { id: 'S8', name: 'Grand Central', x: 65, y: 35, line: 'Line B' }, // Transfer
+
+    // Line 3 (Right - Finance)
+    { id: 'S9', name: 'Wall St', x: 80, y: 90, line: 'Line C' },
+    { id: 'S10', name: 'Broad St', x: 80, y: 80, line: 'Line C' },
+    { id: 'S11', name: 'Bleecker', x: 80, y: 60, line: 'Line C' },
+    { id: 'S12', name: '59th St', x: 80, y: 20, line: 'Line C' },
+];
+
+export const SUBWAY_LINES_SVG_PATH = `
+    M 20 90 L 20 50 L 35 35 L 35 10
+    M 50 90 L 50 10
+    M 80 95 L 80 10
+    M 20 50 L 50 55 L 80 60
+`;
 
 // Helper to generate dynamic fish ASCII
 export const generateFishAscii = (charCount: number, mouthOpen: boolean): string => {
